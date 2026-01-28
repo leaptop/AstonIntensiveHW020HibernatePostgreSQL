@@ -1,0 +1,23 @@
+services: # Раздел со списком сервисов (контейнеров), которые docker compose будет поднимать
+  postgres: # Имя сервиса (логическое). По нему можно делать: docker compose logs postgres
+    image: postgres:16 # Какой Docker-образ запустить: официальный Postgres версии 16
+    container_name: user-service-postgres # Явное имя контейнера (вместо автосгенерированного)
+    environment: # Переменные окружения, которые читает entrypoint образа Postgres при первом запуске
+      POSTGRES_DB: user_service_db # Создать БД с таким именем (только при первой инициализации, когда volume пустой)
+      POSTGRES_USER: user_service_user # Создать пользователя с таким именем (при первой инициализации)
+      POSTGRES_PASSWORD: StrongPassword_123 # Пароль для этого пользователя (при первой инициализации)
+    ports: # Проброс портов из контейнера на хост-машину (твой Windows)
+      - "5432:5432" # host:container → на ПК порт 5432 будет направляться в контейнер на порт 5432
+    volumes: # Монтирование томов (постоянного хранилища) внутрь контейнера
+      - pgdata:/var/lib/postgresql/data # Именованный volume "pgdata" подключить как папку data Postgres внутри контейнера
+
+volumes: # Раздел с объявлением именованных volumes (томов), которыми пользуются сервисы
+  pgdata: # Определяем volume с именем pgdata (реально Docker может создать user-service_pgdata с префиксом проекта)
+
+
+# POSTGRES_DB/USER/PASSWORD срабатывают только при первом запуске, когда volume pgdata ещё пустой.
+#Если ты меняешь пароль в compose, но volume уже с данными — пароль не “обновится сам”.
+#
+#Volume pgdata — это причина, почему база не пропадает при docker compose down.
+#Чтобы удалить и контейнер, и данные базы:
+#docker compose down -v
