@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "https://hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+
+        <!-- ===== JDBC подключение к Postgres из docker-compose ===== -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+
+        <!-- JDBC URL: хост = localhost (Windows), порт = 5432, БД = user_service_db -->
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/user_service_db</property>
+
+        <!-- Эти значения должны совпадать с docker-compose.yml -->
+        <property name="hibernate.connection.username">user_service_user</property>
+        <property name="hibernate.connection.password">StrongPassword_123</property>
+
+        <!-- ===== Диалект SQL для PostgreSQL (Hibernate 6) ===== -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+        <!-- ===== Управление схемой (таблицами) =====
+             update  - создаст таблицы, если их нет, и постарается обновить схему
+             create  - пересоздаст схему при каждом старте (удалит старое)
+             validate- только проверит, что таблицы соответствуют entity (ничего не меняет)
+        -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- ===== SQL в консоль (удобно на старте) ===== -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.highlight_sql">true</property>
+
+        <!-- ===== Таймзона JDBC (важно для OffsetDateTime / timestamptz) ===== -->
+        <property name="hibernate.jdbc.time_zone">UTC</property>
+
+        <!-- ===== Маппинги (какие Entity включать) ===== -->
+        <mapping class="org.alekseev.entity.User"/>
+
+    </session-factory>
+</hibernate-configuration>
