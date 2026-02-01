@@ -22,8 +22,7 @@ public final class HibernateUtil { // final: запрещаем наследов
      */
     public static SessionFactory getSessionFactory() { // public: доступен из любого места (DAO/Service/UI)
 
-        // Если фабрика ещё не создана — создаём
-        if (sessionFactory == null) { // первая проверка (быстро, без синхронизации)
+        if (sessionFactory == null) {
 
             // synchronized: блокируем доступ, чтобы два потока не создали фабрику одновременно
             synchronized (HibernateUtil.class) { // лочим именно объект класса HibernateUtil
