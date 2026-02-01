@@ -16,14 +16,15 @@ import java.time.OffsetDateTime; // Тип даты-времени с часов
 @Entity // Говорим Hibernate: этот класс является сущностью (будет храниться в БД)
 @Table( // Настройки таблицы, соответствующей этой сущности
         name = "users", // Имя таблицы в БД. Если не указать, будет имя класса (User) или по стратегии naming
-        uniqueConstraints = { // EXPLAIN FROM HERE
+        uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_users_email", // Имя constraint (удобно видеть в ошибках БД/логах)
-                        columnNames = "email" // Колонка, которая должна быть уникальной
+                        columnNames = "email" // Колонка, которая должна быть уникальной (на неё наложен constraint,
+                        // т.е. она должна быть уникальной)
                 )
         }
-)//TO HERE
-public class User { // Java-класс, который маппится на таблицу users
+)
+public class User {
 
     @Id // Это поле — первичный ключ (PRIMARY KEY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)

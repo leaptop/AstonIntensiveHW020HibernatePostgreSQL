@@ -7,13 +7,13 @@ public class App {
     public static void main(String[] args) {
 
         // try-with-resources: гарантирует, что session.close() вызовется автоматически в конце блока
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // HibernateUtil.getSessionFactory(): получаем фабрику (создастся при первом вызове)
-            // openSession(): открываем Session — это “контекст” общения с БД
+        try (Session session = HibernateUtil
+                .getSessionFactory()//Получаем фабрику (создастся при первом вызове)
+                .openSession()) {//Открываем Session — это “контекст” общения с БД
 
-            // createNativeQuery("select 1"): выполняем “сырой” SQL (native query), чтобы проверить соединение
-            // getSingleResult(): берём единственный результат (здесь это число 1)
-            Object result = session.createNativeQuery("select 1").getSingleResult();
+            Object result = session
+                    .createNativeQuery("select 1")//выполняем “сырой” SQL (native query), чтобы проверить соединение
+                    .getSingleResult();//Берём единственный результат (здесь это число 1)
 
             // Пишем в консоль, чтобы убедиться, что база доступна и запросы выполняются
             System.out.println("DB connection OK, select 1 = " + result);
