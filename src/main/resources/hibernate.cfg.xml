@@ -6,7 +6,8 @@
 <hibernate-configuration>
     <session-factory>
 
-        <!-- ===== JDBC подключение к Postgres из docker-compose ===== -->
+        <!-- ===== JDBC подключение к Postgres из docker-compose.
+         Указываем какой драйвер использовать.  ===== -->
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
 
         <!-- JDBC URL: хост = localhost (Windows), порт = 5432, БД = user_service_db -->
