@@ -13,7 +13,7 @@ package org.alekseev.dao.exception;
  */
 public class DaoException extends RuntimeException {
 
-    public DaoException(String message, Throwable cause) {
+    public DaoException(String message, Throwable cause) {//изменение из гит мобайл
         super(message, cause);
     }
 
