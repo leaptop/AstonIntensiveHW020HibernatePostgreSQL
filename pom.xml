@@ -62,6 +62,50 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
+    Мы подключаем Mockito, чтобы писать юнит-тесты сервисного слоя без реальной БД.
+    Юнит-тесты должны проверять только логику сервиса, поэтому DAO мы будем "подменять" мок-объектом.
+-->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.12.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            Мы подключаем интеграцию Mockito с JUnit 5, чтобы включать моки аннотациями @Mock и @ExtendWith.
+            Это уменьшает ручной код в тестах и делает тесты короче, но при этом более читаемыми.
+        -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.12.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            Мы подключаем Testcontainers, чтобы интеграционные тесты запускали настоящий PostgreSQL в Docker-контейнере.
+            Это даёт эффект "почти как прод", но контейнер создаётся временно и не зависит от твоего docker-compose.
+        -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.20.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            Мы подключаем модуль Testcontainers для PostgreSQL, чтобы получать удобный класс PostgreSQLContainer.
+            Этот контейнер выдаёт JDBC URL/логин/пароль, и мы используем их в тесте вместо localhost из hibernate.cfg.xml.
+        -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>1.20.4</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -76,11 +120,63 @@
                 </configuration>
             </plugin>
 
-            <!-- Запуск тестов -->
+            <!--
+     Мы настраиваем Surefire так, чтобы он запускал только unit-тесты.
+     Это нужно, чтобы при команде mvn test не поднимались Docker-контейнеры и тесты были быстрыми.
+ -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <!--
+                        Мы явно говорим, какие имена файлов считаем unit-тестами.
+                        Эффект снаружи: любой класс *Test.java будет запускаться командой mvn test.
+                    -->
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+
+                    <!--
+                        Мы явно исключаем интеграционные тесты из запуска Surefire.
+                        Эффект снаружи: классы *IT.java не будут запускаться на фазе test и не будут мешать unit-тестам.
+                    -->
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!--
+                Мы добавляем Failsafe для интеграционных тестов, потому что они должны выполняться отдельно от unit-тестов.
+                Эффект снаружи: команда mvn verify будет запускать *IT.java, а mvn test — нет.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
+                <executions>
+                    <execution>
+                        <!--
+                            Мы подключаем цели integration-test и verify, чтобы Maven правильно включил интеграционные тесты в жизненный цикл.
+                            Эффект снаружи: интеграционные тесты выполняются после сборки и не смешиваются с unit-тестами.
+                        -->
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+
+                        <configuration>
+                            <!--
+                                Мы говорим, какие имена файлов считаем интеграционными тестами.
+                                Эффект снаружи: любой класс *IT.java будет запускаться только на стадии verify.
+                            -->
+                            <includes>
+                                <include>**/*IT.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
