@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * UserDaoHibernate — реализация DAO через Hibernate.
  *
- * Здесь происходит всё "не Java Core":
+ * Здесь происходит (всё "не Java Core"):
  * - открытие Session
  * - запуск транзакции
  * - ORM-операции (persist/get/remove/query)
@@ -55,7 +55,8 @@ public class UserDaoHibernate implements UserDao {
                 // - обычно вызывает flush (выгрузку изменений в SQL) перед commit
                 tx.commit();
 
-                // После commit у объекта user уже должен быть id (особенно при IDENTITY).
+                // После commit у объекта user уже должен быть id (особенно при IDENTITY) (id приходит из БД при INSERT,
+                // а INSERT вызывается коммитом) .
                 log.info("User created with id={}", user.getId());
                 return user.getId();
 
@@ -129,7 +130,9 @@ public class UserDaoHibernate implements UserDao {
 
             try {
                 // Загружаем пользователя в рамках этой Session.
-                // Теперь этот объект становится "persistent" (управляемым).
+                // Теперь этот объект становится "persistent" (управляемым). Т.е. есть соответствие:
+                //объект джавы = объект БД, работаем с объектом джавы user. После его изменения
+                //вызываем commit для внесения этих изменений в БД.
                 User user = session.get(User.class, id);
 
                 if (user == null) {
