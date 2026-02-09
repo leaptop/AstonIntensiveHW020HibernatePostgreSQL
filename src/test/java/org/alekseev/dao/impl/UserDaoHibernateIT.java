@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * - Здесь окружение намеренно настоящее (контейнер + Hibernate),
  * потому что цель — проверить “склейку” слоёв и реальное поведение SQL/транзакций.
  */
-@Testcontainers
+@Testcontainers//Примерно здесь запускается Docker и Postgres (вообще jvm решает когда и как запускать Docker).
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)//Создаём один объект тестового класса на все тесты. Если указать
 //PER_METHOD, то будет создаваться новый объект на каждый тестовый метод, помеченный аннотацией @Test.
 class UserDaoHibernateIT {

@@ -25,5 +25,8 @@ Homework 3:
 Тесты должны быть изолированы друг от друга.
 
 Запуск приложения с хибернейтом и БД: как обычное консольное приложение Shift 10
+Для запуска докера: docker compose up -d
 
-mvn -q test
+mvn test — только unit-tests (быстро, без Docker)
+
+mvn verify — unit + integration tests (запустится контейнер Docker с БД PostgreSQL через Testcontainers)
